@@ -1,0 +1,17 @@
+lib/CDB_Perl.pm
+lib/CDB_Perl/Read.pm
+lib/CDB_Perl/Write.pm
+Changes
+Makefile.PL
+MANIFEST
+README
+t/01write.t
+t/02read.t
+t/03read_tie.t
+t/04write_tie.t
+t/99cleanup.t
+eg/debug.pl
+eg/get_values.pl
+eg/tie_iterate.pl
+eg/tie_write.pl
+META.yml                                 Module meta-data (added by MakeMaker)

@@ -1,0 +1,30 @@
+Revision history for Perl extension CDB_Perl.
+
+0.04 Mon May  3 19:13:11 WEST 2004
+	  new directory layout
+	  First actual release
+
+0.03.04 Sat May  1 15:33:42 WEST 2004
+	- Write tie test functions
+	  fixed a bug in the DESTROY,UNTIE and finish functions when invoked several times
+
+0.03.03 Sat May  1 00:16:15 WEST 2004
+	- Write tie interface
+
+0.03.02 Fri Apr 30 21:32:17 WEST 2004
+	- Cache for tie read interface speeds up iterations by 50%
+	  Tests for tie read interface
+
+0.03.01 Fri Apr 30 19:43:27 WEST 2004
+	- TIE interface for reading and iterating a cdb
+
+0.02.01  Wed Apr  7 21:28:00 2004
+	- read and write tests simulate a random cdb
+
+0.02  Wed Apr  7 20:25:32 2004
+	- first working version
+
+0.01  Wed Apr  7 05:07:24 2004
+	- original version; created by h2xs 1.22 with options
+		-XAP -n CDB_Perl
+
