@@ -1,5 +1,12 @@
 Revision history for Perl extension CDB_Perl.
 
+0.05 Sat Nov 13 23:26:27 WET 2004
+	  solved bug while iterating over a tied hash
+	  support for returning array with get_value
+	  get_values deprecated
+	  updated tests
+	  solved some bugs in testing
+
 0.04 Mon May  3 19:13:11 WEST 2004
 	  new directory layout
 	  First actual release

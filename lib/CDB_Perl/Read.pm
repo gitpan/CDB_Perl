@@ -45,6 +45,9 @@ sub new{
 }
 
 sub get_value{
+	if(wantarray){
+		return &get_values(@_);
+	}
 	my ($self, $key) = @_;
 
 	if(!defined($key)){
@@ -203,7 +206,7 @@ sub FETCH{
 
 	my $lkey = $self->{'tie'}->{'lastkey'};
 	if(defined($lkey) && $key eq $lkey){
-		return $lkey;
+		return $self->{'tie'}->{'lastvalue'};
 	}
 
 	my $value = $self->get_value($key);

@@ -1,6 +1,6 @@
 package CDB_Perl;
 
-$VERSION = '0.04_00';
+$VERSION = '0.50_00';
 
 use strict;
 
@@ -77,8 +77,10 @@ CDB_Perl - Perl extension reading and creating CDB files
 
 	#get the first value (insertion order)
 	my $value = $rcdb->get_value('key');
+	@values = $rcdb->get_value('key');
 
 	#get the next values, end indicated by undef
+	#use when iterating over multiple values of a key
 	my $next_value = $rcdb->get_next();
 
 	####################
@@ -90,6 +92,7 @@ CDB_Perl - Perl extension reading and creating CDB files
 
 	#insert key value pairs
 	$wcdb->insert('key','value');
+	$wcdb->insert('key','value1','value2');
 
 	#finish the CDB (automatic in destructor so you don't need to do this)
 	$wcdb->finish;
