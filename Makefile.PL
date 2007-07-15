@@ -7,6 +7,6 @@ WriteMakefile(
     'VERSION_FROM'	=> 'lib/CDB_Perl.pm', # finds $VERSION
     'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT => 'Read and create CDB files in pure perl (no xs)',
-       AUTHOR     => 'Cl·udio Valente <plank@cpan.org>') : ()),
+      (ABSTRACT => 'Read and create CDB files in pure perl (no xs)', # retrieve abstract from module
+       AUTHOR     => 'Cl√°udio Valente <plank@cpan.org>') : ()),
 );

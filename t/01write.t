@@ -3,7 +3,7 @@
 
 #########################
 
-use Test::More tests => 6;
+use Test::More tests => 5;
 BEGIN { use_ok('CDB_Perl::Write') };
 
 #########################
@@ -18,16 +18,11 @@ if(! -d 'tmp'){
 }
 chdir('tmp') or die "Could not change current directory. $!\n";
 
-my $ak = '#test_array';
-my @av;
-push @av,"array_value_$_" for(1..100);
-
 #first create a random list with repeated entries
 
 our $cdb;
 ok($cdb = CDB_Perl::Write->new('write.cdb'), 'Create writer object');
 ok($cdb->insert('#CDB','#Perl'),'Insert entry');
-ok($cdb->insert($ak,@av),'Insert multiple values');
 
 our $len = 10000;
 our @vocab = ('a'..'z','A'..'Z',0..9);

@@ -30,7 +30,7 @@ sub new{
 	}
 	my $size = -s $fname;
 	if($size < 2048){
-		croak "invalid file (< 2048 bytes)";
+		croak "invalid file ($size < 2048 bytes)";
 	}
 	my $file;
 	open $file,'<:raw',$fname or croak "Error opening file $fname. $!";
@@ -45,9 +45,6 @@ sub new{
 }
 
 sub get_value{
-	if(wantarray){
-		return &get_values(@_);
-	}
 	my ($self, $key) = @_;
 
 	if(!defined($key)){
@@ -206,7 +203,7 @@ sub FETCH{
 
 	my $lkey = $self->{'tie'}->{'lastkey'};
 	if(defined($lkey) && $key eq $lkey){
-		return $self->{'tie'}->{'lastvalue'};
+		return $lkey;
 	}
 
 	my $value = $self->get_value($key);

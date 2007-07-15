@@ -1,6 +1,6 @@
 package CDB_Perl;
 
-$VERSION = '0.50_00';
+$VERSION = '0.05';
 
 use strict;
 
@@ -22,16 +22,15 @@ sub hash {
 
 		#ugly kludge
 		use integer;
-		use bytes;
-		for my $c (split //, $s) {
+		for my $c (unpack("C*",$s)) {
 			$h = $h + ($h << 5);
-			$h = $h ^ ord($c);
+			$h = $h ^ $c;
 			$h = $h & 0xffffffff; 
 		}
 	}
-	if($h<0){
+	if ( $h < 0 ) {
 		#another ugly kludge
-		$h = (($h>>1)<<1) + ($h & 1);
+		$h = ( ( $h >> 1 ) << 1 ) + ( $h & 1 );
 	}
 	return ($h, $h&255, $h>>8);
 }
@@ -77,10 +76,8 @@ CDB_Perl - Perl extension reading and creating CDB files
 
 	#get the first value (insertion order)
 	my $value = $rcdb->get_value('key');
-	@values = $rcdb->get_value('key');
 
 	#get the next values, end indicated by undef
-	#use when iterating over multiple values of a key
 	my $next_value = $rcdb->get_next();
 
 	####################
@@ -92,7 +89,6 @@ CDB_Perl - Perl extension reading and creating CDB files
 
 	#insert key value pairs
 	$wcdb->insert('key','value');
-	$wcdb->insert('key','value1','value2');
 
 	#finish the CDB (automatic in destructor so you don't need to do this)
 	$wcdb->finish;
@@ -140,17 +136,13 @@ L<CDB_File|CDB_File> XS implementation quite faster than this module
 
 The eg directory for some examples on how to use the package
 
-=head1 TO DO
-
-Improve documentation a lot
-
 =head1 AUTHOR
 
-Cl·udio Valente, E<lt>plank@cpan.orgE<gt>
+Cl√°udio Valente, E<lt>plank@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004 by Cl·udio Valente
+Copyright 2007 by Cl√°udio Valente
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
 

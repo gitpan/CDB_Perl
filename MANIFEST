@@ -5,10 +5,13 @@ Changes
 Makefile.PL
 MANIFEST
 README
+t/00external.t
 t/01write.t
 t/02read.t
 t/03read_tie.t
 t/04write_tie.t
+external/external.cdb
+external/external.dump
 t/99cleanup.t
 eg/debug.pl
 eg/get_values.pl

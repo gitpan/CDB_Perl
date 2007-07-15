@@ -12,7 +12,13 @@ sub new{
 	my $fname = shift or croak "$pack->new(filename); filename not defined";
 
 	my $file;
-	open($file,'>:raw',$fname) or croak "Error openning '$fname' for writing.$!";
+	eval{
+		#try to use mmaped IO first, if that fails try regular IO
+		open($file,'>:raw:mmap',$fname) or croak "Error openning '$fname' for writing.$!";
+	};
+	if($@){
+		open($file,'>:raw',$fname) or croak "Error openning '$fname' for writing.$!";
+	}
 
 	my $self =  bless{}, $pack;
 	$self->file($file);
@@ -22,27 +28,25 @@ sub new{
 }
 
 sub insert{
-	my ($self, $k,@v) = @_;
+	my ($self, $k,$v) = @_;
 	my $table = $self->table;
+	my $pos = $self->pos;
 
 	if(!defined($k)){
-		croak "insert must be called with ('key','value') as arguments. Key not defined.";
+		croak "insert must be called with 'key', 'value' as arguments. Key not defined.";
 	}
-	
-	my ($h, $h0,$h1) = $self->hash($k);
 	my $klen = length($k);
+	my $vlen = length($v);
+	my ($h, $h0,$h1) = $self->hash($k);
 
 	if(!$table->[$h0]){
 		$table->[$h0] = [];
 	}
 
-	
-	for my $v (@v){
-		push @{$table->[$h0]},($h,$self->pos);
-		my $vlen = length($v);
-		$self->write_long($klen,$vlen);
-		$self->write($k.$v,$klen+$vlen);
-	}
+	push @{$table->[$h0]},($h,$pos);
+
+	$self->write_long($klen,$vlen);
+	$self->write($k.$v,$klen+$vlen);
 
 	return $self;
 }

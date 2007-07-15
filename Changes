@@ -1,14 +1,12 @@
 Revision history for Perl extension CDB_Perl.
 
-0.05 Sat Nov 13 23:26:27 WET 2004
-	  solved bug while iterating over a tied hash
-	  support for returning array with get_value
-	  get_values deprecated
-	  updated tests
-	  solved some bugs in testing
+0.5 Sun Jul 15 20:41:23 WEST 2007
+	- Improved hash function performance. Now uses unpack. Speed increase from 40% to 80%.
+	  Tests now make tests against a cdb created using other utilities (Bernstein's cdbmake)
+	  Write now tries to use mmap IO if possible
 
-0.04 Mon May  3 19:13:11 WEST 2004
-	  new directory layout
+0.04_00 Mon May  3 19:13:11 WEST 2004
+	- new directory layout
 	  First actual release
 
 0.03.04 Sat May  1 15:33:42 WEST 2004
@@ -28,10 +26,10 @@ Revision history for Perl extension CDB_Perl.
 0.02.01  Wed Apr  7 21:28:00 2004
 	- read and write tests simulate a random cdb
 
-0.02  Wed Apr  7 20:25:32 2004
+0.02_00  Wed Apr  7 20:25:32 2004
 	- first working version
 
-0.01  Wed Apr  7 05:07:24 2004
+0.01_00  Wed Apr  7 05:07:24 2004
 	- original version; created by h2xs 1.22 with options
 		-XAP -n CDB_Perl
 
