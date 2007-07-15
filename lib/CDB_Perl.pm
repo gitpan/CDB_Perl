@@ -1,6 +1,6 @@
 package CDB_Perl;
 
-$VERSION = '0.05';
+$VERSION = '0.50';
 
 use strict;
 
