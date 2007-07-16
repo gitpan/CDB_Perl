@@ -1,6 +1,6 @@
 package CDB_Perl;
 
-$VERSION = '0.50';
+$VERSION = '0.51';
 
 use strict;
 
@@ -56,7 +56,7 @@ sub pos{
 
 1;
 
-
+=encoding utf-8
 
 =head1 NAME
 
