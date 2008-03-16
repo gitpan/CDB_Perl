@@ -6,6 +6,7 @@ require CDB_Perl;
 @ISA = qw(CDB_Perl);
 
 use strict;
+use warnings;
 
 sub new{
 	my ($pack, $fname, $cache) = @_;
@@ -45,6 +46,9 @@ sub new{
 }
 
 sub get_value{
+	if(wantarray){
+		return &get_values(@_);
+	}
 	my ($self, $key) = @_;
 
 	if(!defined($key)){
@@ -63,6 +67,9 @@ sub get_value{
 	$self->iter($iter);
 	return $self->get_next;
 }
+
+#compatibility with CDB_File
+*multi_get = \&get_values;
 
 sub get_values{
 	my $self = shift;
@@ -202,15 +209,13 @@ sub FETCH{
 	my ($self, $key) = @_;
 
 	my $lkey = $self->{'tie'}->{'lastkey'};
-	if(defined($lkey) && $key eq $lkey){
-		return $lkey;
+	my $lval = $self->{'tie'}->{'lastvalue'};
+	if(defined($lkey) && $key eq $lkey and defined($lval)){
+		return $lval;
+	}else{
+		my $value = $self->get_value($key);
+		return $value;
 	}
-
-	my $value = $self->get_value($key);
-	$self->{'tie'}->{'lastkey'} = $key;
-	$self->{'tie'}->{'lastvalue'} = $value;
-
-	return $value;
 }
 
 sub STORE{

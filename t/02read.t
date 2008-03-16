@@ -5,6 +5,8 @@
 
 use Test::More tests => 4;
 BEGIN { use_ok('CDB_Perl::Read') };
+use bytes;
+use strict;
 
 #########################
 
@@ -12,9 +14,8 @@ BEGIN { use_ok('CDB_Perl::Read') };
 # its man page ( perldoc Test::More ) for help writing this test script.
 
 chdir('tmp') or die "Could not change current directory. $!\n";
-our $cbd;
 
-ok($cdb = CDB_Perl::Read->new('write.cdb'), 'Create reader object');
+ok(my $cdb = CDB_Perl::Read->new('write.cdb'), 'Create reader object');
 ok(eq_array([$cdb->get_values('#CDB')], ['#Perl']),'Reading single value');
 ok(check_cdb(), 'Checking values in written cdb');
 
@@ -36,7 +37,15 @@ sub check_cdb{
 
 	#now see if they are all defined
 	while( my($k,$v) = each(%data) ){
-		if( $cdb->get_values($k) != @$v){
+		my @v = $cdb->get_values($k);
+
+		if(@v == @$v){
+			for(my $n=0; $n<@v; ++$n){
+				if( $v[$n] ne $v->[$n]){
+					return;
+				}
+			}
+		}else{
 			return;
 		}
 	}

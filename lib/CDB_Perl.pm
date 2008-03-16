@@ -1,8 +1,9 @@
 package CDB_Perl;
 
-$VERSION = '0.51';
+$VERSION = '0.52';
 
 use strict;
+use warnings;
 
 sub seek{
 	my ($self,$pos, $where) = @_;
@@ -28,9 +29,9 @@ sub hash {
 			$h = $h & 0xffffffff; 
 		}
 	}
-	if ( $h < 0 ) {
+	if($h<0){
 		#another ugly kludge
-		$h = ( ( $h >> 1 ) << 1 ) + ( $h & 1 );
+		$h = (($h>>1)<<1) + ($h & 1);
 	}
 	return ($h, $h&255, $h>>8);
 }
@@ -60,7 +61,7 @@ sub pos{
 
 =head1 NAME
 
-CDB_Perl - Perl extension reading and creating CDB files
+CDB_Perl - Perl extension for reading and creating CDB files
 
 =head1 SYNOPSIS
 
@@ -76,8 +77,10 @@ CDB_Perl - Perl extension reading and creating CDB files
 
 	#get the first value (insertion order)
 	my $value = $rcdb->get_value('key');
+	@values = $rcdb->get_value('key');
 
 	#get the next values, end indicated by undef
+	#use when iterating over multiple values of a key
 	my $next_value = $rcdb->get_next();
 
 	####################
@@ -136,13 +139,17 @@ L<CDB_File|CDB_File> XS implementation quite faster than this module
 
 The eg directory for some examples on how to use the package
 
+=head1 TO DO
+
+Improve documentation a lot
+
 =head1 AUTHOR
 
-Cláudio Valente, E<lt>plank@cpan.orgE<gt>
+ClÃ¡udio Valente, E<lt>plank@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2007 by Cláudio Valente
+Copyright 2008 by ClÃ¡udio Valente
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
 

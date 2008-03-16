@@ -3,7 +3,12 @@
 
 #########################
 
+use File::Compare qw(compare);
+
 use Test::More tests => 7;
+use bytes;
+use strict;
+
 BEGIN { use_ok('CDB_Perl::Write') };
 
 #########################
@@ -13,8 +18,7 @@ BEGIN { use_ok('CDB_Perl::Write') };
 
 chdir('tmp') or die "Could not change current directory. $!\n";
 
-our %cbd;
-ok(tie(%cdb, CDB_Perl::Write, 'write_tie.cdb'), 'Create tied hash');
+ok(tie(my %cdb, 'CDB_Perl::Write', 'write_tie.cdb'), 'Create tied hash');
 ok(!($cdb{'#CDB'} = '#Perl'), 'Insert one entry');
 
 sub insert_values{
@@ -31,22 +35,7 @@ sub insert_values{
 	return 1;
 }
 
-sub compare_cdb{
-	open NOTIE,'<','write.cdb' or die $!;
-	open TIE,'<','write_tie.cdb' or die $!;
-
-	my $notie;
-	my $tie;
-	while(read(NOTIE,$notie,1024)){
-		read(TIE,$tie,1024) or die;
-		if($tie ne $notie){
-			return;
-		}
-	}
-	return 1;
-}
-
 ok(insert_values(),'Insert random data');
 ok(untie %cdb,'Untie cdb');
 ok(-s 'write.cdb' == -s 'write_tie.cdb','File sizes match');
-ok(compare_cdb(),'Compare tied and not tied cdbs');
+ok(0==compare('write.cdb', 'write_tie.cdb'),'Compare tied and not tied cdbs');

@@ -5,13 +5,13 @@
 
 use Test::More tests => 5;
 BEGIN { use_ok('CDB_Perl::Write') };
+use bytes;
+use strict;
 
 #########################
 
 # Insert your test code below, the Test::More module is use()ed here so read
 # its man page ( perldoc Test::More ) for help writing this test script.
-
-use strict;
 
 if(! -d 'tmp'){
 	mkdir('tmp') or die "Error creating tmp directory to make tests. $!\n";

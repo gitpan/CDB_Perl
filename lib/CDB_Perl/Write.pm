@@ -6,6 +6,7 @@ require CDB_Perl;
 our @ISA = qw(CDB_Perl);
 
 use strict;
+use warnings;
 
 sub new{
 	my $pack = shift;

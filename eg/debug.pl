@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-#print information abou nonempty hash tables in a cdb
+#print information about nonempty hash tables in a cdb
 #usefull for debug
 
 use Data::Dumper;

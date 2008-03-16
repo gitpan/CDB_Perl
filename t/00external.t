@@ -5,6 +5,8 @@
 
 use Test::More ('no_plan');
 BEGIN { use_ok('CDB_Perl::Read') };
+use bytes;
+use strict;
 
 #########################
 
@@ -14,10 +16,24 @@ BEGIN { use_ok('CDB_Perl::Read') };
 chdir('external') or die "Could not change current directory. $!\n";
 our $cbd;
 
-ok($cdb = CDB_Perl::Read->new('external.cdb'), 'Create reader object');
+my @multiple_values = ('1','2','2','3','3','3','4','4','4','4','5','5','5','5','5');
+
+ok(my $cdb = CDB_Perl::Read->new('external.cdb'), 'Create reader object');
 ok(eq_array([$cdb->get_values('claudio')], ['valente']),'Reading single value');
 ok(eq_array([$cdb->get_values('manuel')], ['neves']),'Reading single value');
-ok(eq_array([$cdb->get_values('multiple')], ['1','2','2','3','3','3','4','4','4','4','5','5','5','5','5']),'Reading multiple values');
+ok(eq_array([$cdb->get_values('multiple')], \@multiple_values),'Reading multiple values');
+
+my @values = $cdb->get_value('multiple');
+
+ok(eq_array(\@values, \@multiple_values),'Reading multiple values using array context');
+
+@values = ();
+$values[0] = $cdb->get_value('multiple');
+
+while(my $v = $cdb->get_next()){
+	push @values, $v;
+}
+ok(eq_array(\@values, \@multiple_values),'Reading multiple values using get_next');
 
 #now compare all keys
 

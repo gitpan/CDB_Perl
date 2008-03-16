@@ -12,6 +12,8 @@ t/03read_tie.t
 t/04write_tie.t
 external/external.cdb
 external/external.dump
+external/each.cdb
+external/each.dump
 t/99cleanup.t
 eg/debug.pl
 eg/get_values.pl
