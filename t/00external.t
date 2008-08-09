@@ -3,7 +3,7 @@
 
 #########################
 
-use Test::More ('no_plan');
+use Test::More tests=>4867;
 BEGIN { use_ok('CDB_Perl::Read') };
 use bytes;
 use strict;

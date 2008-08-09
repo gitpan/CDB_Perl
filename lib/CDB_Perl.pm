@@ -1,6 +1,6 @@
 package CDB_Perl;
 
-$VERSION = '0.52';
+$VERSION = '0.53';
 
 use strict;
 use warnings;
@@ -57,7 +57,7 @@ sub pos{
 
 1;
 
-=encoding utf-8
+=encoding utf8
 
 =head1 NAME
 
@@ -131,7 +131,7 @@ B<CDB_Perl> is a B<perl only> interface to read and create CDB files.
 CDB stands for Constant Database, a data format created by Dan Berstein.
 
 It's very efficient to read CDB files but creation is somewhat costly.
-This module is a fallback option for people with problems using XS modules. See next section for better alternatives.
+This module is a fall-back option for people with problems using XS modules. See next section for better alternatives.
 
 =head1 SEE ALSO
 
@@ -145,11 +145,11 @@ Improve documentation a lot
 
 =head1 AUTHOR
 
-ClÃ¡udio Valente, E<lt>plank@cpan.orgE<gt>
+Cláudio Valente, E<lt>plank@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008 by ClÃ¡udio Valente
+Copyright 2008 by Cláudio Valente
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
 

@@ -1,5 +1,10 @@
 Revision history for Perl extension CDB_Perl.
 
+0.53 Sat Aug  9 16:26:04 WEST 2008
+	- Fixed encoding problems in the documentation
+	  Removed spurious constraint on perl version
+	  Improved testing by specifying the number of tests in each file
+
 0.52 Fri Mar 14 20:45:55 WET 2008
 	- Fixed bug regarding iteration via each in the tie interface
 	  Improved tests to test each iteration
