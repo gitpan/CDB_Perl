@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'		=> 'CDB_Perl',
     'VERSION_FROM'	=> 'lib/CDB_Perl.pm', # finds $VERSION
-    'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
+    'PREREQ_PM'		=> {'Test::More' => 0}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT => 'Read and create CDB files in pure perl (no xs)', # retrieve abstract from module
        AUTHOR     => 'Cláudio Valente <plank@cpan.org>') : ()),

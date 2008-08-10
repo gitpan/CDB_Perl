@@ -3,26 +3,17 @@ package CDB_Perl::Write;
 use Carp qw(carp croak);
 
 require CDB_Perl;
-our @ISA = qw(CDB_Perl);
+@ISA = qw(CDB_Perl);
 
 use strict;
-use warnings;
+#use warnings;
 
 sub new{
 	my $pack = shift;
 	my $fname = shift or croak "$pack->new(filename); filename not defined";
 
-	my $file;
-	eval{
-		#try to use mmaped IO first, if that fails try regular IO
-		open($file,'>:raw:mmap',$fname) or croak "Error openning '$fname' for writing.$!";
-	};
-	if($@){
-		open($file,'>:raw',$fname) or croak "Error openning '$fname' for writing.$!";
-	}
-
 	my $self =  bless{}, $pack;
-	$self->file($file);
+	$self->file_open($fname, '>');
 	$self->table([]);
 	$self->seek(2048);
 	return $self;
@@ -108,13 +99,8 @@ sub write_table{
 	return $self;
 }
 
-sub table{
-    return shift->set('table',@_);
-}
-
-sub pos{
-    return shift->set('pos',@_);
-}
+*table = CDB_Perl::set('table');
+*pos   = CDB_Perl::set('pos');
 
 sub write_long{
 	my $self = shift;

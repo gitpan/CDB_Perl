@@ -1,6 +1,5 @@
 use Test::More tests => 5;
 BEGIN { use_ok('CDB_Perl::Write') };
-use bytes;
 use strict;
 
 if(! -d 'tmp'){
@@ -8,17 +7,17 @@ if(! -d 'tmp'){
 }
 chdir('tmp') or die "Could not change current directory. $!\n";
 
-our $cdb;
+my $cdb;
 ok($cdb = CDB_Perl::Write->new('write.cdb'), 'Create writer object');
 ok($cdb->insert('#CDB','#Perl'),'Insert entry');
 
-our $len = 10000;
-our @vocab = ('a'..'z','A'..'Z',0..9);
+my $len = 10000;
+my @vocab = ('a'..'z','A'..'Z',0..9);
 
 sub insert_values {
 
-	open KEYS,   '>:raw', 'keys' or die;
-	open VALUES, '>:raw', 'values' or die;
+	open KEYS,   '>keys' or die $!;
+	open VALUES, '>values' or die $!;
 
 	for (0 .. $len) {
 		my $key   = randword();

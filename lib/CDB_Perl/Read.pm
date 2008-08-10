@@ -6,7 +6,7 @@ require CDB_Perl;
 @ISA = qw(CDB_Perl);
 
 use strict;
-use warnings;
+#use warnings;
 
 sub new{
 	my ($pack, $fname, $cache) = @_;
@@ -33,11 +33,8 @@ sub new{
 	if($size < 2048){
 		croak "invalid file ($size < 2048 bytes)";
 	}
-	my $file;
-	open $file,'<:raw',$fname or croak "Error opening file $fname. $!";
-
 	my $self = bless {},$pack;
-	$self->file($file)->cache($cache)->fsize($size);
+	$self->file_open($fname, '<')->cache($cache)->fsize($size);
 
 	if($cache){
 		$self->tables({});
@@ -89,7 +86,7 @@ sub get_next{
 	my $self = shift;
 
 	my $iter = $self->iter;
-	if(!$iter){
+	if(not defined $iter){
 		croak "Can't call get_next without having called get_value";
 	}
 
@@ -182,23 +179,14 @@ sub read_long{
 	return @rsp;
 }
 
-sub cache{
-	shift->set('cache',@_);
-}
+*cache  = CDB_Perl::set('cache',@_);
+*fsize  = CDB_Perl::set('fsize',@_);
+*iter   = CDB_Perl::set('iter',@_);
+*tables = CDB_Perl::set('tables',@_);
 
-sub fsize{
-	shift->set('fsize',@_);
-}
-
-sub iter{
-	shift->set('iter',@_);
-}
-
-sub tables{
-	shift->set('tables',@_);
-}
-
-#Tied hash interface follows
+###############################
+# Tied hash interface follows #
+###############################
 
 sub TIEHASH{
 	my $pack = shift;
@@ -261,5 +249,10 @@ sub DELETE{
 	croak "Can't delete data on a readonly CDB";
 }
 *CLEAR = \&DELETE;
+
+sub DESTROY{
+	my $self = shift;
+	close($self->file) or croak "Error closing CDB file.\n$!";
+}
 
 1;

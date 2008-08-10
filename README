@@ -6,6 +6,9 @@ CDB_Perl is a perl only (pure perl) implementation of utilities related to the C
 The work is fully functional and no major changes in the interface are expected in the future.
 For examples have a look at the eg directory in the distribution
 
+This should work for any version >= 5.6 but 5.4 onwards might be fine though the test won't run.
+PerlIO is a nice to have but it should now work even in systems where it isn't available.
+
 INSTALLATION
 
 To install this module type the following:
@@ -19,7 +22,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-None
+Test::More
 
 COPYRIGHT AND LICENCE
 

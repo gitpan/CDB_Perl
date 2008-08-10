@@ -1,6 +1,5 @@
 use Test::More tests => 4;
 BEGIN { use_ok('CDB_Perl::Read') };
-use bytes;
 use strict;
 
 chdir('tmp') or die "Could not change current directory. $!\n";
@@ -10,8 +9,8 @@ ok(eq_array([$cdb->get_values('#CDB')], ['#Perl']),'Reading single value');
 ok(check_cdb(), 'Checking values in written cdb');
 
 sub check_cdb{
-	open KEYS,'<','keys' or die;
-	open VALUES,'<','values' or die;
+	open KEYS,'<keys' or die $!;
+	open VALUES,'<values' or die $!;
 	
 	my %data=();
 

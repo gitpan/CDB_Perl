@@ -1,9 +1,13 @@
+# vim: set fileencoding=latin1 :
+
 package CDB_Perl;
 
-$VERSION = '0.53';
+use Carp qw(carp croak);
+
+$VERSION = '0.54';
 
 use strict;
-use warnings;
+#use warnings;
 
 sub seek{
 	my ($self,$pos, $where) = @_;
@@ -13,51 +17,80 @@ sub seek{
 }
 
 sub hash {
-	my $s = $_[1];
-
-	if (!defined($s)) {
+	if (!defined($_[1])) {
 		die "Can't hash an undefined value\n";
 	}
 	my $h = 5381;
 	{
-
 		#ugly kludge
 		use integer;
-		for my $c (unpack("C*",$s)) {
-			$h = $h + ($h << 5);
-			$h = $h ^ $c;
-			$h = $h & 0xffffffff; 
+		for my $c (unpack("C*",$_[1])) {
+			$h = ($h + ($h << 5)) ^ $c;
 		}
+		#truncate to 32 bits
+		$h &= 0xffffffff; 
 	}
 	if($h<0){
-		#another ugly kludge
+		#another ugly kludge due to signed arithmetic
 		$h = (($h>>1)<<1) + ($h & 1);
 	}
 	return ($h, $h&255, $h>>8);
 }
 
 sub set{
-	my ($self,$method,$value) = @_;
+	my ($method) = @_;
 
-	if(defined $value){
-		$self->{$method} = $value;
-		return $self;
-	}else{
-		return $self->{$method};
+	return sub{
+		my ($self, $value) = @_;
+		if(defined $value){
+			$self->{$method} = $value;
+			return $self;
+		}else{
+			return $self->{$method};
+		}
+	};
+}
+
+*file = set('file');
+*pos  = set('pos');
+
+sub file_open{
+	my ($self, $fname, $mode) = @_;
+
+	if(not (defined($fname) and defined($mode)) ){
+		croak "filename and mode are mandatory.";
 	}
+
+	my $file;
+	if ($] and $] > 5.0059){
+		eval{
+			#very old versions of perl don't support open($file, $mode, $fname); at compile time. So for backward compatibility this is my only option.
+			open($file, "$mode$fname") or croak "Error opening '$fname' with mode '$mode'. $!";
+			binmode($file, ':raw:mmap');
+		};
+		if($@){
+			$file = fallback_open($fname, $mode);
+		}
+	}else{
+		#just use the fallback mode
+		$file = fallback_open($fname, $mode);
+	}
+
+	$self->file($file);
+	return $self;
 }
 
-sub file{
-	shift->set('file',@_);
-}
+#fallback for open on old versions on perl that lack PerlIO
+sub fallback_open{
+	my ($fname, $mode) = @_;
 
-sub pos{
-	shift->set('pos',@_);
+	local *CDB_FH;
+	open(CDB_FH, "$mode$fname") or croak "Error opening '$fname' with mode '$mode' even while using the falback option. $!";
+	binmode(CDB_FH);
+	return *CDB_FH;
 }
 
 1;
-
-=encoding utf8
 
 =head1 NAME
 
@@ -145,11 +178,11 @@ Improve documentation a lot
 
 =head1 AUTHOR
 
-Cl√°udio Valente, E<lt>plank@cpan.orgE<gt>
+Cl·udio Valente, E<lt>plank@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008 by Cl√°udio Valente
+Copyright 2008 by Cl·udio Valente
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
 
