@@ -1,5 +1,9 @@
 Revision history for Perl extension CDB_Perl.
 
+0.55 Tue Aug 12 00:06:32 WEST 2008
+	- Removed mmap perlio for compatibility (Win32 namely)
+	  no more accessors/setters
+
 0.54 Sun Aug 10 17:41:11 WEST 2008
 	- Made PerlIO optional should work for perl>=5.6 and maybe even with 5.x older versions than that
 	  Optimized hash function once more (10% gain)

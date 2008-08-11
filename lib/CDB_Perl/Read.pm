@@ -15,10 +15,6 @@ sub new{
 		croak "Invalid constructor parameter";
 	}
 	
-	if(!defined($fname)){
-		croak "file parameter mandatory at $pack->new(file)";
-	}
-
 	#by default cache is on
 	if(!defined($cache)){
 		$cache = 1;
@@ -34,10 +30,11 @@ sub new{
 		croak "invalid file ($size < 2048 bytes)";
 	}
 	my $self = bless {},$pack;
-	$self->file_open($fname, '<')->cache($cache)->fsize($size);
+	$self->file_open($fname, '<');
+	$self->{'cache'} = $cache;
 
 	if($cache){
-		$self->tables({});
+		$self->{'tables'} = {};
 	}
 	return $self;
 }
@@ -61,8 +58,8 @@ sub get_value{
 		pos  => $h1,
 	};
 
-	$self->iter($iter);
-	return $self->get_next;
+	$self->{'iter'} = $iter;
+	return $self->get_next();
 }
 
 #compatibility with CDB_File
@@ -85,7 +82,7 @@ sub get_values{
 sub get_next{
 	my $self = shift;
 
-	my $iter = $self->iter;
+	my $iter = $self->{'iter'};
 	if(not defined $iter){
 		croak "Can't call get_next without having called get_value";
 	}
@@ -123,10 +120,10 @@ sub get_table{
 		die "table number not defined";
 	}
 
-	my $cache = $self->cache;
+	my $cache = $self->{'cache'};
 
-	if($cache && (exists($self->tables->{$n}))){
-		return $self->tables->{$n};
+	if($cache && (exists($self->{'tables'}->{$n}))){
+		return $self->{'tables'}->{$n};
 	}
 
 	#position in the header
@@ -137,7 +134,7 @@ sub get_table{
 	my @table = $self->read_long(2*$len);
 
 	if($cache){
-		$self->tables->{$n} = \@table;
+		$self->{'tables'}->{$n} = \@table;
 	}
 
 	return \@table;
@@ -163,7 +160,7 @@ sub read{
 	}
 
 	my $data;
-	read($self->file,$data,$len) or die "Error reading file";
+	read($self->{'file'},$data,$len) or die "Error reading file";
 	#pos not updated
 	return $data;
 }
@@ -175,14 +172,8 @@ sub read_long{
 		return ();
 	}
 
-	my @rsp = unpack("V$len",$self->read($len*4));
-	return @rsp;
+	return unpack("V$len",$self->read($len*4));
 }
-
-*cache  = CDB_Perl::set('cache',@_);
-*fsize  = CDB_Perl::set('fsize',@_);
-*iter   = CDB_Perl::set('iter',@_);
-*tables = CDB_Perl::set('tables',@_);
 
 ###############################
 # Tied hash interface follows #
@@ -252,7 +243,7 @@ sub DELETE{
 
 sub DESTROY{
 	my $self = shift;
-	close($self->file) or croak "Error closing CDB file.\n$!";
+	close($self->{'file'}) or croak "Error closing CDB file.\n$!";
 }
 
 1;

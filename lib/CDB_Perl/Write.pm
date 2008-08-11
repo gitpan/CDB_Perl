@@ -14,64 +14,74 @@ sub new{
 
 	my $self =  bless{}, $pack;
 	$self->file_open($fname, '>');
-	$self->table([]);
+	$self->{'table'}=[];
 	$self->seek(2048);
 	return $self;
 }
 
 sub insert{
 	my ($self, $k,$v) = @_;
-	my $table = $self->table;
-	my $pos = $self->pos;
 
-	if(!defined($k)){
-		croak "insert must be called with 'key', 'value' as arguments. Key not defined.";
+	if($self->{'finished'}){
+		croak "Trying to insert values into a finished CDB."
+	}else{
+		my $table = $self->{'table'};
+		my $pos = $self->{'pos'};
+
+		if(!defined($k)){
+			croak "insert must be called with 'key', 'value' as arguments. Key not defined.";
+		}
+		my $klen = length($k);
+		my $vlen = length($v);
+		my ($h, $h0,$h1) = $self->hash($k);
+
+		if(!$table->[$h0]){
+			$table->[$h0] = [];
+		}
+
+		push @{$table->[$h0]},($h,$pos);
+
+		$self->write_long($klen,$vlen);
+		$self->write($k.$v,$klen+$vlen);
+
+		return $self;
 	}
-	my $klen = length($k);
-	my $vlen = length($v);
-	my ($h, $h0,$h1) = $self->hash($k);
-
-	if(!$table->[$h0]){
-		$table->[$h0] = [];
-	}
-
-	push @{$table->[$h0]},($h,$pos);
-
-	$self->write_long($klen,$vlen);
-	$self->write($k.$v,$klen+$vlen);
-
-	return $self;
 }
 
 sub finish{
 	my $self = shift;
-	my $table = $self->table;
-	my $pos = $self->pos;
-	my $init = $pos;
+	if($self->{'finished'}){
+		croak("Trying to finish an already finished CDB.");
+	}else{
+		my $table = $self->{'table'};
+		my $pos = $self->{'pos'};
+		my $init = $pos;
 
-	my @head;
+		my @head;
 
-	for my $n (0..255){
-		my $t = $table->[$n];
-		my $len = 0;
-		if($t && @$t){
-			$len = @$t;
-			$pos = $self->pos;
-			$self->write_table($n);
+		for my $n (0..255){
+			my $t = $table->[$n];
+			my $len = 0;
+			if($t && @$t){
+				$len = @$t;
+				$pos = $self->{'pos'};
+				$self->write_table($n);
+			}
+			push @head,($pos,$len);
 		}
-		push @head,($pos,$len);
+		$self->seek(0);
+		$self->write_long(@head);
+		$self->seek($init);
+		$self->{'finished'} = 1;
+		return $self;
 	}
-	$self->seek(0);
-	$self->write_long(@head);
-	$self->seek($init);
-	return $self;
 }
 
 sub write_table{
 	my ($self, $n) = @_;
 	die unless defined($n);
 
-	my $table = $self->table->[$n];
+	my $table = $self->{'table'}->[$n];
 	my $len = @$table;
 	
 	my @tmp;
@@ -99,9 +109,6 @@ sub write_table{
 	return $self;
 }
 
-*table = CDB_Perl::set('table');
-*pos   = CDB_Perl::set('pos');
-
 sub write_long{
 	my $self = shift;
 	my @data = @_;
@@ -115,15 +122,15 @@ sub write{
 	my $self = shift;
 	my($data, $len) = @_;
 
-	my $file = $self->file;
+	my $file = $self->{'file'};
 	if(!print $file $data){
-		$self->io_error();
+		croak("IO error $!");
 	}
 
 	if(!defined ($len)){
 		$len = length($data);
 	}
-	$self->pos($self->pos + $len);
+	$self->{'pos'}+=$len;
 	return $self;
 }
 
@@ -153,8 +160,10 @@ sub DELETE{
 
 sub DESTROY{
 	my $self = shift;
-	$self->finish;
-	close($self->file) or croak "Error closing CDB file.\n$!";
+	if(!$self->{'finished'}){
+		$self->finish;
+	}
+	close($self->{'file'}) or croak "Error closing CDB file.\n$!";
 }
 
 1;

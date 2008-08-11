@@ -4,7 +4,7 @@ package CDB_Perl;
 
 use Carp qw(carp croak);
 
-$VERSION = '0.54';
+$VERSION = '0.55';
 
 use strict;
 #use warnings;
@@ -12,8 +12,8 @@ use strict;
 sub seek{
 	my ($self,$pos, $where) = @_;
 	$where ||= 0;
-	seek($self->file, $pos, $where) or die "Error seeking file";
-	$self->pos($pos);
+	seek($self->{'file'}, $pos, $where) or die "Error seeking file";
+	$self->{'pos'}=$pos;
 }
 
 sub hash {
@@ -37,23 +37,6 @@ sub hash {
 	return ($h, $h&255, $h>>8);
 }
 
-sub set{
-	my ($method) = @_;
-
-	return sub{
-		my ($self, $value) = @_;
-		if(defined $value){
-			$self->{$method} = $value;
-			return $self;
-		}else{
-			return $self->{$method};
-		}
-	};
-}
-
-*file = set('file');
-*pos  = set('pos');
-
 sub file_open{
 	my ($self, $fname, $mode) = @_;
 
@@ -66,7 +49,7 @@ sub file_open{
 		eval{
 			#very old versions of perl don't support open($file, $mode, $fname); at compile time. So for backward compatibility this is my only option.
 			open($file, "$mode$fname") or croak "Error opening '$fname' with mode '$mode'. $!";
-			binmode($file, ':raw:mmap');
+			binmode($file, ':raw');
 		};
 		if($@){
 			$file = fallback_open($fname, $mode);
@@ -76,7 +59,7 @@ sub file_open{
 		$file = fallback_open($fname, $mode);
 	}
 
-	$self->file($file);
+	$self->{'file'} = $file;
 	return $self;
 }
 
